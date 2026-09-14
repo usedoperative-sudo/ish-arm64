@@ -61,8 +61,21 @@ jobs:
 
       - name: Build iSH Kernel
         if: ${{ matrix.kernel == 'ish' }}
-        run: xcodebuild -project iSH.xcodeproj -scheme iSH -arch arm64 -sdk iphoneos GCC_PREPROCESSOR_DEFINITIONS='$(inherited) dump_wx_stats()=' CODE_SIGNING_ALLOWED=NO
+        run: |
+          xcodebuild -project iSH.xcodeproj \
+            -scheme iSH \
+            -arch arm64 \
+            -sdk iphoneos \
+            GCC_PREPROCESSOR_DEFINITIONS='$(inherited) dump_wx_stats()=' \
+            OTHER_LDFLAGS='$(inherited) -Wl,-undefined,dynamic_lookup' \
+            CODE_SIGNING_ALLOWED=NO
 
       - name: Build Linux Kernel
         if: ${{ matrix.kernel == 'linux' }}
-        run: xcodebuild -project iSH.xcodeproj -scheme iSH+Linux -arch x86_64 -sdk iphonesimulator GCC_PREPROCESSOR_DEFINITIONS='$(inherited) dump_wx_stats()=' CODE_SIGNING_ALLOWED=NO
+        run: |
+          xcodebuild -project iSH.xcodeproj \
+            -scheme iSH+Linux \
+            -arch x86_64 \
+            -sdk iphonesimulator \
+            GCC_PREPROCESSOR_DEFINITIONS='$(inherited) dump_wx_stats()=' \
+            CODE_SIGNING_ALLOWED=NO
