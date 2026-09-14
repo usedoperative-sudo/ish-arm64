@@ -37,6 +37,7 @@ jobs:
           ninja -C build
         env:
           CC: ${{ matrix.cc }}
+          CFLAGS: "-Dmem_watch_peek32(...)="
 
       - name: Test
         run: ninja -C build test
@@ -66,7 +67,7 @@ jobs:
             -scheme iSH \
             -arch arm64 \
             -sdk iphoneos \
-            GCC_PREPROCESSOR_DEFINITIONS='$(inherited) dump_wx_stats()=' \
+            GCC_PREPROCESSOR_DEFINITIONS='$(inherited) dump_wx_stats()= mem_watch_peek32(...)=0 generic_mkdirat(...)=0' \
             OTHER_LDFLAGS='$(inherited) -Wl,-undefined,dynamic_lookup' \
             CODE_SIGNING_ALLOWED=NO
 
@@ -77,5 +78,6 @@ jobs:
             -scheme iSH+Linux \
             -arch x86_64 \
             -sdk iphonesimulator \
-            GCC_PREPROCESSOR_DEFINITIONS='$(inherited) dump_wx_stats()=' \
+            GCC_PREPROCESSOR_DEFINITIONS='$(inherited) dump_wx_stats()= mem_watch_peek32(...)=0 generic_mkdirat(...)=0' \
+            OTHER_LDFLAGS='$(inherited) -Wl,-undefined,dynamic_lookup' \
             CODE_SIGNING_ALLOWED=NO
