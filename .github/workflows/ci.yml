@@ -2,39 +2,45 @@ name: CI
 
 on:
   push:
+    branches: [master]
   pull_request:
-      branches: [master]
+    branches: [master]
 
 jobs:
   build-linux:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         cc: [clang, gcc]
         kernel: [ish, linux]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
-            submodules: true
-      - uses: actions/setup-python@v2
+          submodules: true
+
+      - uses: actions/setup-python@v5
         with:
-            python-version: '3.x'
+          python-version: '3.x'
+
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install libarchive-dev
+          sudo apt-get install -y libarchive-dev
           pip3 install meson ninja
+
       - name: Clone Linux
-        if: matrix.kernel == 'linux'
+        if: ${{ matrix.kernel == 'linux' }}
         run: deps/clone-linux.sh
+
       - name: Build
         run: |
-          meson build -Dengine=asbestos -Dkernel=${{matrix.kernel}}
+          meson build -Dengine=asbestos -Dkernel=${{ matrix.kernel }}
           ninja -C build
         env:
-          CC: ${{matrix.cc}}
+          CC: ${{ matrix.cc }}
+
       - name: Test
-        if: matrix.kernel == 'ish'
+        if: ${{ matrix.kernel == 'ish' }}
         run: ninja -C build test
 
   build-mac:
@@ -43,18 +49,22 @@ jobs:
       matrix:
         kernel: [ish, linux]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
-            submodules: true
+          submodules: true
+
       - name: Install dependencies
         run: |
           brew install llvm lld ninja libarchive meson
+
       - name: Clone Linux
-        if: matrix.kernel == 'linux'
+        if: ${{ matrix.kernel == 'linux' }}
         run: deps/clone-linux.sh
-      - name: Build
-        if: matrix.kernel == 'ish'
+
+      - name: Build iSH Kernel
+        if: ${{ matrix.kernel == 'ish' }}
         run: xcodebuild -project iSH.xcodeproj -scheme iSH -arch arm64 -sdk iphoneos CODE_SIGNING_ALLOWED=NO
-      - name: Build
-        if: matrix.kernel == 'linux'
+
+      - name: Build Linux Kernel
+        if: ${{ matrix.kernel == 'linux' }}
         run: xcodebuild -project iSH.xcodeproj -scheme iSH+Linux -arch x86_64 -sdk iphonesimulator CODE_SIGNING_ALLOWED=NO
