@@ -22,21 +22,21 @@ jobs:
           python3 -c '
           import glob, re
           
-          # Patrón para encontrar declaraciones estáticas atómicas inicializadas a NULL
-          # Ej: static _Atomic(tipo) nombre = NULL;
-          pattern = re.compile(r"static\s+_Atomic\s*\([^)]+\)\s+\w+\s*=\s*NULL\s*;")
+          # Patrón mejorado que maneja espacios y saltos de línea alrededor del = NULL
+          pattern = re.compile(r"(static\s+_Atomic\s*\([^)]+\)\s+\w+)\s*=\s*NULL\s*;", re.DOTALL)
           
           for filepath in glob.glob("**/*.[ch]", recursive=True):
               try:
                   with open(filepath, "r", encoding="utf-8") as f:
                       content = f.read()
                   
-                  new_content = pattern.sub(lambda m: m.group(0).replace(" = NULL", ""), content)
+                  # Reemplazar manteniendo solo la declaración sin el = NULL
+                  new_content = pattern.sub(r"\1;", content)
                   
                   if new_content != content:
                       with open(filepath, "w", encoding="utf-8") as f:
-                        f.write(new_content)
-                      print(f"Patcheado: {filepath}")
+                          f.write(new_content)
+                      print(f"Patcheado globalmente: {filepath}")
               except Exception as e:
                   pass
           '
