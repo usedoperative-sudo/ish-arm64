@@ -73,7 +73,7 @@ jobs:
                      -scheme iSH \
                      -sdk iphoneos \
                      -configuration Release \
-                     -xcconfig app/AppARM64.xcconfig \
+                     GCC_PREPROCESSOR_DEFINITIONS='$(inherited) ENGINE_ASBESTOS=1 GUEST_ARM64=1' \
                      CODE_SIGN_IDENTITY="" \
                      CODE_SIGNING_REQUIRED=NO \
                      CODE_SIGNING_ALLOWED=NO \
