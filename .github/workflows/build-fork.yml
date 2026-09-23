@@ -77,3 +77,22 @@ jobs:
                      CODE_SIGNING_REQUIRED=NO \
                      CODE_SIGNING_ALLOWED=NO \
                      build
+
+      - name: Preparar y empaquetar el archivo IPA
+        run: |
+          mkdir -p Payload
+          APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData -name "iSH.app" -type d | grep "Release-iphoneos" | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "❌ No se encontró la ruta de iSH.app"
+            exit 1
+          fi
+          echo "✅ Aplicación encontrada en: $APP_PATH"
+          cp -r "$APP_PATH" Payload/
+          zip -r iSH-unsigned.ipa Payload
+          echo "✅ IPA generado con éxito: iSH-unsigned.ipa"
+
+      - name: Subir artefacto IPA
+        uses: actions/upload-artifact@v3
+        with:
+          name: iSH-ARM64-Unsigned
+          path: iSH-unsigned.ipa
