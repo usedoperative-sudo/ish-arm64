@@ -1,0 +1,35 @@
+name: Build iSH-ARM64 (Fork)
+
+on:
+  workflow_dispatch:
+
+jobs:
+    build-arm64:
+      runs-on: macos-latest
+      steps:
+        - uses: actions/checkout@v2
+          with:
+            submodules: true
+            fetch-depth: 0
+
+        - name: Instalar dependencias del sistema (Meson, Ninja, LLVM)
+          run: |
+            brew install ninja lld llvm meson
+            bundle install
+
+        - name: Compilar dependencias del emulador ARM64 (Paso crítico del fork)
+          run: |
+            # ish-arm64 utiliza scripts internos que invocan Meson para preparar la arquitectura
+            # Ej: Configuración del backend AArch64 para iOS
+            ./app/xcode-meson.sh --release
+            
+            # O usando meson directamente con los parámetros del fork:
+            # meson setup build-ios -Dguest_arch=arm64 --cross-file=ios-cross.txt
+            # ninja -C build-ios
+
+        - name: Compilar y Empaquetar IPA con Fastlane / Xcode
+          run: |
+            # Una vez generado el backend ARM, Fastlane empaqueta el ipa definitivo
+            bundle exec fastlane upload_build
+          env:
+            FASTLANE_SKIP_UPDATE_CHECK: 1
