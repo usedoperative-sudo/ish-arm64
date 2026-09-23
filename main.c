@@ -374,8 +374,6 @@ static void ish_cli_memory_governor_start(void) {
         pthread_detach(t);
 }
 
-__attribute__((weak)) void dump_wx_stats(void) {}
-
 int main(int argc, char *const argv[]) {
     ish_signpost_init();
     atexit(dump_pc_hist);

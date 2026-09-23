@@ -780,3 +780,6 @@ dword_t sys_wait4(pid_t_ id, addr_t status_addr, dword_t options, addr_t rusage_
 dword_t sys_waitpid(pid_t_ pid, addr_t status_addr, dword_t options) {
     return sys_wait4(pid, status_addr, options, 0);
 }
+
+__attribute__((weak)) void dump_wx_stats(void) {}
+
