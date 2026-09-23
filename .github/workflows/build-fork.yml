@@ -5,7 +5,7 @@ on:
 
 jobs:
   build-fork:
-    runs-on: macos-14 # O macos-15 según prefieras
+    runs-on: macos-14
     steps:
       - name: Checkout del repositorio con submódulos
         uses: actions/checkout@v3
@@ -17,21 +17,18 @@ jobs:
         run: |
           brew install ninja lld llvm meson
 
+      - name: Parchear compatibilidad atómica en el kernel
+        run: |
+          sed -i '' 's/static _Atomic(ish_timer_tick_hook_t) g_timer_tick_hook = NULL;/static _Atomic(ish_timer_tick_hook_t) g_timer_tick_hook = 0;/' kernel/calls.c
+
       - name: Configurar y compilar el backend ARM64 con Meson
         run: |
-          # Creamos el directorio de compilación para el fork
           mkdir -p build-ios
-          
-          # Inicializamos Meson apuntando a la raíz (.) y especificando el guest_arch para ARM64
           meson setup build-ios . -Dguest_arch=arm64 --buildtype=release
-          
-          # Compilamos el núcleo estático con Ninja
           ninja -C build-ios
 
-      - name: Compilar la App de iOS sin firma (para evitar errores de certificates)
+      - name: Compilar la App de iOS sin firma
         run: |
-          # Si el proyecto usa un Workspace o un Proyect (.xcodeproj / .xcworkspace)
-          # Asegúrate de ajustar el nombre del archivo workspace/project si es diferente.
           xcodebuild -workspace App.xcworkspace \
                      -scheme iSH \
                      -sdk iphoneos \
