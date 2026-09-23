@@ -374,10 +374,12 @@ static void ish_cli_memory_governor_start(void) {
         pthread_detach(t);
 }
 
+__attribute__((weak)) void dump_wx_stats(void) {}
+
 int main(int argc, char *const argv[]) {
     ish_signpost_init();
     atexit(dump_pc_hist);
-    { __attribute__((weak)) void dump_wx_stats(void) {} atexit(dump_wx_stats); }
+    atexit(dump_wx_stats);
     // Write watchpoint (diagnostic): ISH_WATCH_PAGE=<hex page addr> arms the
     // per-store page check in the write gadgets; ISH_WATCH_LO/HI narrow which
     // hits get recorded.
