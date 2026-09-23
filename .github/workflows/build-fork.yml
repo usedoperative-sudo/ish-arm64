@@ -17,10 +17,11 @@ jobs:
         run: |
           brew install ninja lld llvm meson
 
-      - name: Parchear compatibilidad atómica en el kernel
+      - name: Parchear compatibilidad del fork para macOS
         run: |
           sed -i '' 's/static _Atomic(ish_timer_tick_hook_t) g_timer_tick_hook = NULL;/static _Atomic(ish_timer_tick_hook_t) g_timer_tick_hook;/' kernel/calls.c
           sed -i '' 's/static _Atomic(ish_fork_guard_t) g_fork_guard = NULL;/static _Atomic(ish_fork_guard_t) g_fork_guard;/' kernel/fork.c
+          sed -i '' 's/posix_spawn_file_actions_addchdir(/posix_spawn_file_actions_addchdir_np(/g' kernel/native_offload.c
           
       - name: Configurar y compilar el backend ARM64 con Meson
         run: |
