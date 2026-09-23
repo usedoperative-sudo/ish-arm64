@@ -18,7 +18,7 @@
 #define CPU_RETVAL(cpu) ((cpu).eax)
 #endif
 
-static _Atomic(ish_fork_guard_t) g_fork_guard = NULL;
+static _Atomic(ish_fork_guard_t) g_fork_guard;
 
 void ish_set_fork_guard(ish_fork_guard_t guard) {
     atomic_store_explicit(&g_fork_guard, guard, memory_order_release);

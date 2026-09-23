@@ -112,8 +112,8 @@ struct mount *g_fakefs_mount = NULL;
  * NULL unless host registers via fakefs_set_path_*_hook(). Defined here
  * (before resolve_path() / bind_mount_translate_path() so both directions
  * can consult them). */
-static _Atomic(fakefs_path_translate_hook_t) g_path_translate_hook = NULL;
-static _Atomic(fakefs_path_reverse_hook_t) g_path_reverse_hook = NULL;
+static _Atomic(fakefs_path_translate_hook_t) g_path_translate_hook;
+static _Atomic(fakefs_path_reverse_hook_t) g_path_reverse_hook;
 
 void fakefs_set_path_translate_hook(fakefs_path_translate_hook_t hook) {
     atomic_store_explicit(&g_path_translate_hook, hook, memory_order_release);
