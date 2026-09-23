@@ -67,12 +67,13 @@ jobs:
           # Guardamos la ruta para que los siguientes pasos la usen
           echo "XCODE_WORKSPACE=$WORKSPACE" >> $GITHUB_ENV
 
-      - name: Compilar la App de iOS sin firma (Dinámico)
+      - name: Compilar la App de iOS con ARM64 (Asbestos)
         run: |
           xcodebuild -workspace "$XCODE_WORKSPACE" \
                      -scheme iSH \
                      -sdk iphoneos \
                      -configuration Release \
+                     -xcconfig app/GuestARM64.xcconfig \
                      CODE_SIGN_IDENTITY="" \
                      CODE_SIGNING_REQUIRED=NO \
                      CODE_SIGNING_ALLOWED=NO \
