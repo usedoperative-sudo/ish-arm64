@@ -40,7 +40,13 @@ jobs:
               except Exception as e:
                   pass
           '
-          
+      - name: Parchear compatibilidad del fork para macOS 2
+        run: |
+          sed -i '' 's/static _Atomic(ish_timer_tick_hook_t) g_timer_tick_hook = NULL;/static _Atomic(ish_timer_tick_hook_t) g_timer_tick_hook;/' kernel/calls.c
+          sed -i '' 's/static _Atomic(ish_fork_guard_t) g_fork_guard = NULL;/static _Atomic(ish_fork_guard_t) g_fork_guard;/' kernel/fork.c
+          sed -i '' 's/posix_spawn_file_actions_addchdir(/posix_spawn_file_actions_addchdir_np(/g' kernel/native_offload.c
+          sed -i '' 's/static _Atomic(fakefs_path_translate_hook_t) g_path_translate_hook = NULL;/static _Atomic(fakefs_path_translate_hook_t) g_path_translate_hook;/' fs/fake.c
+          sed -i '' 's/static _Atomic(fakefs_path_reverse_hook_t) g_path_reverse_hook = NULL;/static _Atomic(fakefs_path_reverse_hook_t) g_path_reverse_hook;/' fs/fake.c
       - name: Configurar y compilar el backend ARM64 con Meson
         run: |
           mkdir -p build-ios
