@@ -19,7 +19,7 @@ jobs:
 
       - name: Parchear compatibilidad atómica en el kernel
         run: |
-          sed -i '' 's/static _Atomic(ish_timer_tick_hook_t) g_timer_tick_hook = NULL;/static _Atomic(ish_timer_tick_hook_t) g_timer_tick_hook = {0};/' kernel/calls.c
+          sed -i '' 's/static _Atomic(ish_timer_tick_hook_t) g_timer_tick_hook = NULL;/static _Atomic(ish_timer_tick_hook_t) g_timer_tick_hook;/' kernel/calls.c
           
       - name: Configurar y compilar el backend ARM64 con Meson
         run: |
