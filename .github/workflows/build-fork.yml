@@ -92,7 +92,7 @@ jobs:
           echo "✅ IPA generado con éxito: iSH-unsigned.ipa"
 
       - name: Subir artefacto IPA
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: iSH-ARM64-Unsigned
           path: iSH-unsigned.ipa
