@@ -53,9 +53,23 @@ jobs:
           meson setup build-ios . -Dguest_arch=arm64 --buildtype=release
           ninja -C build-ios
 
-      - name: Compilar la App de iOS sin firma
+      - name: Buscar dinámicamente el Workspace de Xcode
         run: |
-          xcodebuild -workspace App.xcworkspace \
+          # Busca el primer .xcworkspace en el repositorio
+          WORKSPACE=$(find . -name "*.xcworkspace" -maxdepth 3 | head -n 1)
+          
+          if [ -z "$WORKSPACE" ]; then
+            echo "❌ No se encontró ningún .xcworkspace"
+            exit 1
+          fi
+          
+          echo "✅ Workspace encontrado: $WORKSPACE"
+          # Guardamos la ruta para que los siguientes pasos la usen
+          echo "XCODE_WORKSPACE=$WORKSPACE" >> $GITHUB_ENV
+
+      - name: Compilar la App de iOS sin firma (Dinámico)
+        run: |
+          xcodebuild -workspace "$XCODE_WORKSPACE" \
                      -scheme iSH \
                      -sdk iphoneos \
                      -configuration Release \
